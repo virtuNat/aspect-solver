@@ -17,6 +17,6 @@ If a test case fails in any way, or a problem is encountered, please contact vir
 - Khauvinkh
 - Kreuz (tumblr post explaining it [here](https://kreuz-unlimited.tumblr.com/private/168154366989/tumblr_p0edqyYPpj1rdm00w))
 - theSardonyx
-- tpr (Miro, hacky version over [here](http://aspect-quiz.surge.sh/))
+- tpr (hacky version over [here](http://aspect-quiz.surge.sh/))
 
 Thanks to everyone who helped!
