@@ -1,6 +1,13 @@
 #!/usr/bin/env python
+"""Aspect solver program. Uses functional flow, with the intent of being
+easily translatable into purely functional languages like Haskell or Racket
+"""
 from sys import argv
 from itertools import chain
+
+
+def invalid_value():
+    raise ValueError('how HIGH do you have to even BE???')
 
 
 def map_aspects(index):
@@ -19,7 +26,8 @@ def map_aspects(index):
         'Breath' if index ==  8 else
         'Blood'  if index ==  9 else
         'Life'   if index == 10 else
-        'Doom' # if index == 11
+        'Doom'   if index == 11 else
+        invalid_value() # Invalid value, cause exception
         )
 
 
@@ -39,7 +47,8 @@ def map_adjacents(aspect):
         (4, 10) if aspect ==  8 else # Breath (Hope, Life)
         (5, 11) if aspect ==  9 else # Blood  (Rage, Doom)
         (6,  8) if aspect == 10 else # Life   (Light, Breath)
-        (7,  9)#if aspect == 11        Doom   (Void, Blood)
+        (7,  9) if aspect == 11 else # Doom   (Void, Blood)
+        invalid_value() # Invalid value, cause exception
         )
 
 
@@ -52,7 +61,8 @@ def map_answers(answer):
         (4, 2) if answer == 'B' else
         (3, 1) if answer == 'C' else
         (4, 2) if answer == 'D' else
-        (8, 4)#if answer == 'E'
+        (8, 4) if answer == 'E' else
+        invalid_value() # Invalid value, cause exception
         )
 
 
@@ -131,7 +141,6 @@ def break_ties(point_list, maxima):
         idx for idx, value in enumerate(chain(*culled_list))
         if value == maxima
         ]
-
 
 
 def solve_aspect(answer):
