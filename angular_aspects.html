@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<body>
+
+<p>Put in your answers.</p>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+<input type="text" ng-model="ansString">
+<button type="button" ng-click="inputText()">Process</button>
+
+<div ng-repeat="x in range" ng-click="doBoth()">
+  <form>{{x}}: 
+    <input type="radio" ng-model="ans[x-1]" name="answer {{x}}" ng-value=0> A  
+    <input type="radio" ng-model="ans[x-1]" name="answer {{x}}" ng-value=1> B  
+    <input type="radio" ng-model="ans[x-1]" name="answer {{x}}" ng-value=2> C  
+    <input type="radio" ng-model="ans[x-1]" name="answer {{x}}" ng-value=3> D  
+    <input type="radio" ng-model="ans[x-1]" name="answer {{x}}" ng-value=4> E
+  </form>
+</div>
+
+<br><br>
+
+<table border="1" width="100%">
+<tr>
+<th ng-click="orderByMe('name')">Name</th>
+<th ng-click="orderByMe('score')">Score</th>
+</tr>
+<tr ng-repeat="x in aspects | orderBy:myOrderBy : true track by $index ">
+<td>{{x.name}}</td>
+<td>{{x.score}}</td>
+</tr>
+</table>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+  $scope.range = [1,2,3,4,5,6,7,8,9,10,11,12];
+  $scope.ans = [2,2,2,2,2,2,2,2,2,2,2,2];
+  $scope.questions = [3,3,5,5,6,6,7,7,2,2,4,4];
+  $scope.ansString = "CCCCCCCCCCCC";
+  $scope.letters = "ABCDE";
+  $scope.aspects = [{name:"Space", score:0, tie:10},
+                    {name:"Mind", score:0, tie:8},
+                    {name:"Hope", score:0, tie:7},
+                    {name:"Breath", score:0, tie:3},
+                    {name:"Life", score:0, tie:1},
+                    {name:"Light", score:0, tie:5},
+                    {name:"Time", score:0, tie:11},
+                    {name:"Heart", score:0, tie:9},
+                    {name:"Rage", score:0, tie:6},
+                    {name:"Blood", score:0, tie:2},
+                    {name:"Doom", score:0, tie:0},
+                    {name:"Void", score:0, tie:4}];
+    $scope.orderByMe = function(x) {
+        $scope.myOrderBy = [x, "tie"];
+    }
+    $scope.inputText = function() {
+      if($scope.ansString.length >= 12) {
+        $scope.ansString.toUpperCase();
+        for(i = 0; i < 12; i++) {
+          $scope.ans[i] = $scope.letters.indexOf($scope.ansString[i]);
+        }
+        $scope.calculateScores();
+      }
+    }
+    $scope.doBoth = function() {
+      $scope.outputText();
+      $scope.calculateScores();
+    }
+    $scope.outputText = function() {
+      $scope.ansString = "";
+      for(i = 0; i < 12; i++) {
+          $scope.ansString += $scope.letters[$scope.ans[i]];
+      }
+    }
+    $scope.calculateScores = function() {
+      for(i = 0; i < 12; i++) {
+          $scope.aspects[i].score = 0;
+      }
+      for(i = 0; i < 12; i++) {
+        answer = $scope.ans[i];
+        target = $scope.questions[i];
+        prev = (target + 11) % 12;
+        next = (target + 1) % 12;
+        prevOpp = (target + 5) % 12;
+        nextOpp = (target + 7) % 12;
+        opp = (target + 6) % 12;
+        if(answer != 2) {
+          if(answer > 2) {
+            temp = target;
+            target = opp;
+            opp = temp;
+            temp = prevOpp;
+            prevOpp = prev;
+            prev = temp;
+            temp = nextOpp;
+            nextOpp = next;
+            next = temp;
+          }
+          max = 6;
+          if(answer == 1 || answer == 3) {
+            max = 4;
+          }
+          $scope.aspects[opp].score += 2;
+          $scope.aspects[prevOpp].score += 1;
+          $scope.aspects[nextOpp].score += 1;
+          $scope.aspects[target].score += max;
+          $scope.aspects[prev].score += max/2;
+          $scope.aspects[next].score += max/2;
+        }
+      }
+    }
+});
+</script>
+
+</body>
+</html>
