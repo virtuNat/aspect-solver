@@ -23,8 +23,8 @@
 
 <table border="1" width="100%">
 <tr>
-<th ng-click="orderByMe('name')">Name</th>
-<th ng-click="orderByMe('score')">Score</th>
+<th>Name</th>
+<th>Score</th>
 </tr>
 <tr ng-repeat="x in aspects | orderBy:myOrderBy : true track by $index ">
 <td>{{x.name}}</td>
@@ -40,21 +40,19 @@ app.controller('myCtrl', function($scope) {
   $scope.questions = [3,3,5,5,6,6,7,7,2,2,4,4];
   $scope.ansString = "CCCCCCCCCCCC";
   $scope.letters = "ABCDE";
-  $scope.aspects = [{name:"Space", score:0, tie:10},
-                    {name:"Mind", score:0, tie:8},
-                    {name:"Hope", score:0, tie:7},
-                    {name:"Breath", score:0, tie:3},
-                    {name:"Life", score:0, tie:1},
-                    {name:"Light", score:0, tie:5},
-                    {name:"Time", score:0, tie:11},
-                    {name:"Heart", score:0, tie:9},
-                    {name:"Rage", score:0, tie:6},
-                    {name:"Blood", score:0, tie:2},
-                    {name:"Doom", score:0, tie:0},
-                    {name:"Void", score:0, tie:4}];
-    $scope.orderByMe = function(x) {
-        $scope.myOrderBy = [x, "tie"];
-    }
+  $scope.myOrderBy = ["score", "unpaired", "tie"];
+  $scope.aspects = [{name:"Space", score:0, tie:10, unpaired:false},
+                    {name:"Mind", score:0, tie:8, unpaired:false},
+                    {name:"Hope", score:0, tie:7, unpaired:false},
+                    {name:"Breath", score:0, tie:3, unpaired:false},
+                    {name:"Life", score:0, tie:1, unpaired:false},
+                    {name:"Light", score:0, tie:5, unpaired:false},
+                    {name:"Time", score:0, tie:11, unpaired:false},
+                    {name:"Heart", score:0, tie:9, unpaired:false},
+                    {name:"Rage", score:0, tie:6, unpaired:false},
+                    {name:"Blood", score:0, tie:2, unpaired:false},
+                    {name:"Doom", score:0, tie:0, unpaired:false},
+                    {name:"Void", score:0, tie:4, unpaired:false}];
     $scope.inputText = function() {
       if($scope.ansString.length >= 12) {
         $scope.ansString.toUpperCase();
@@ -72,6 +70,31 @@ app.controller('myCtrl', function($scope) {
       $scope.ansString = "";
       for(i = 0; i < 12; i++) {
           $scope.ansString += $scope.letters[$scope.ans[i]];
+      }
+    }
+    $scope.setPairs = function() {
+      max = 0;
+      for(i = 0; i < 12; i++) {
+        aspectScore = $scope.aspects[i].score;
+        if(aspectScore > max) {
+          max = aspectScore;
+        }
+      }
+      for(i = 0; i < 6; i++) {
+        aspectMax = $scope.aspects[i].score == max;
+        pairAspectMax = $scope.aspects[i + 6].score == max;
+        if(aspectMax && !pairAspectMax) {
+          $scope.aspects[i].unpaired = true;
+          $scope.aspects[i + 6].unpaired = false;
+        }
+        else if(pairAspectMax && !aspectMax) {
+          $scope.aspects[i].unpaired = false;
+          $scope.aspects[i + 6].unpaired = true;
+        }
+        else {
+          $scope.aspects[i].unpaired = false;
+          $scope.aspects[i + 6].unpaired = false;
+        }
       }
     }
     $scope.calculateScores = function() {
@@ -110,6 +133,7 @@ app.controller('myCtrl', function($scope) {
           $scope.aspects[next].score += max/2;
         }
       }
+      $scope.setPairs();
     }
 });
 </script>
